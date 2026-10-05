@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Web Page Creation 展示</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;900&family=Orbitron:wght@800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05050f;color:#fff;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 16px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:-30%;background:conic-gradient(from 0deg,#ff3cac33,#00f0ff33,#00ffc833,#b86bff33,#ff3cac33);filter:blur(90px);animation:spin 20s linear infinite;z-index:-1}
+@keyframes spin{to{transform:rotate(360deg)}}
+h1{font-family:Orbitron;font-size:clamp(32px,6vw,64px);text-align:center;background:linear-gradient(90deg,#ff3cac,#00f0ff,#00ffc8);-webkit-background-clip:text;background-clip:text;color:transparent}
+p.sub{color:#aab;margin:14px 0 50px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,420px));gap:28px;justify-content:center;width:100%}
+a.card{display:block;text-decoration:none;color:#fff;padding:40px 32px;border-radius:28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(16px);transition:transform .4s,box-shadow .4s}
+a.card:hover{transform:translateY(-10px) scale(1.02)}
+a.c1:hover{box-shadow:0 20px 70px rgba(255,60,172,.45)}
+a.c2:hover{box-shadow:0 20px 70px rgba(0,255,200,.4)}
+.icon{font-size:56px}
+h2{margin:18px 0 10px;font-size:26px}
+.card p{color:#bbc;line-height:1.7}
+.tags{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.tags span{font-size:12px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.1)}
+</style>
+</head>
+<body>
+<h1>WEB PAGE CREATION</h1>
+<p class="sub">兩個由 AI 生成的單檔網頁示範 · 純 HTML / CSS / JavaScript</p>
+<div class="grid">
+  <a class="card c1" href="demo1-nebula-cafe.html"><div class="icon">🌌</div><h2>星雲咖啡 品牌形象頁</h2><p>行銷型 Landing Page：互動星空粒子、3D 傾斜卡片、打字機標題、捲動動畫。</p><div class="tags"><span>Canvas 粒子</span><span>Glassmorphism</span><span>3D Tilt</span></div></a>
+  <a class="card c2" href="demo2-aurora-dashboard.html"><div class="icon">🛰️</div><h2>AURORA 智慧城市戰情室</h2><p>資料型 Dashboard：即時串流圖表、雷達掃描、儀表、事件日誌，全部即時跳動。</p><div class="tags"><span>即時圖表</span><span>SVG 動畫</span><span>Neon UI</span></div></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AURORA 智慧城市戰情室</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Orbitron:wght@500;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#030a12;--panel:rgba(8,30,48,.55);--line:rgba(0,255,200,.22);--g:#00ffc8;--b:#00a2ff;--p:#b86bff;--o:#ffb000;--r:#ff3d6e;--text:#d9fff6;--muted:#6fa6a0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.25;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);pointer-events:none;z-index:99}
+.aurora{position:fixed;inset:-20%;background:conic-gradient(from 0deg at 50% 50%,rgba(0,255,200,.12),rgba(0,162,255,.1),rgba(184,107,255,.12),rgba(0,255,200,.12));filter:blur(80px);animation:spin 30s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+header{position:relative;display:flex;justify-content:space-between;align-items:center;padding:20px 28px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(0,255,200,.08),transparent 60%);flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--g);box-shadow:0 0 12px var(--g);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.3;box-shadow:0 0 2px var(--g)}}
+.brand h1{font-family:Orbitron;font-size:22px;letter-spacing:4px;text-shadow:0 0 18px var(--g)}
+.brand small{display:block;font-family:'Noto Sans TC';font-size:12px;color:var(--muted);letter-spacing:2px;text-shadow:none}
+.clock{font-family:Orbitron;font-size:26px;color:var(--g);text-shadow:0 0 16px var(--g)}
+.clock small{display:block;font-size:12px;color:var(--muted);text-align:right;text-shadow:none;font-family:'Noto Sans TC'}
+
+main{position:relative;display:grid;grid-template-columns:repeat(12,1fr);gap:18px;padding:22px 28px 40px}
+.panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;backdrop-filter:blur(12px);overflow:hidden;animation:enter .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes enter{from{opacity:0;transform:translateY(30px) scale(.97)}}
+.panel::before,.panel::after{content:'';position:absolute;width:18px;height:18px;border:2px solid var(--g)}
+.panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-radius:14px 0 0 0}
+.panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-radius:0 0 14px 0}
+.panel h3{font-size:14px;letter-spacing:3px;color:var(--muted);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.panel h3 .live{color:var(--r);font-size:11px;font-family:Orbitron;animation:pulse 1s infinite}
+.shine{position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,200,.12),transparent);animation:sweep 5s infinite;pointer-events:none}
+@keyframes sweep{to{left:130%}}
+
+.kpi{grid-column:span 3}
+.kpi .val{font-family:Orbitron;font-size:38px;font-weight:800;margin-bottom:6px}
+.kpi .delta{font-size:13px;font-family:'JetBrains Mono'}
+.up{color:var(--g)}.down{color:var(--r)}
+.spark{width:100%;height:40px;margin-top:10px}
+.c1 .val{color:var(--g);text-shadow:0 0 18px var(--g)}
+.c2 .val{color:var(--b);text-shadow:0 0 18px var(--b)}
+.c3 .val{color:var(--p);text-shadow:0 0 18px var(--p)}
+.c4 .val{color:var(--o);text-shadow:0 0 18px var(--o)}
+
+.wide{grid-column:span 8}.side{grid-column:span 4}.third{grid-column:span 4}
+#stream{width:100%;height:260px;display:block}
+.legend{display:flex;gap:18px;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+#radar{width:100%;aspect-ratio:1;max-height:280px;display:block;margin:auto}
+
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.donut{width:150px;height:150px;flex-shrink:0;transform:rotate(-90deg)}
+.donut circle{fill:none;stroke-width:18;transition:stroke-dasharray 1.6s cubic-bezier(.2,.8,.2,1)}
+.donut-legend div{font-size:13px;margin:8px 0;color:var(--muted)}
+.donut-legend b{font-family:Orbitron;color:var(--text);margin-left:6px}
+
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:10px}
+.bar{flex:1;background:linear-gradient(180deg,var(--g),rgba(0,162,255,.3));border-radius:6px 6px 0 0;height:0;transition:height 1.2s cubic-bezier(.2,.8,.2,1);position:relative;box-shadow:0 0 14px rgba(0,255,200,.35)}
+.bar span{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}
+.bar em{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-style:normal;font-size:11px;font-family:Orbitron;color:var(--g)}
+
+.log{font-family:'JetBrains Mono';font-size:12.5px;height:200px;overflow:hidden;display:flex;flex-direction:column;gap:7px}
+.log div{padding:6px 10px;border-left:3px solid var(--g);background:rgba(0,255,200,.05);border-radius:4px;animation:slide .5s ease-out}
+.log div.warn{border-color:var(--o);background:rgba(255,176,0,.06)}
+.log div.err{border-color:var(--r);background:rgba(255,61,110,.08)}
+.log time{color:var(--muted);margin-right:8px}
+@keyframes slide{from{opacity:0;transform:translateX(-20px)}}
+
+.gauge-row{display:flex;justify-content:space-around;gap:10px}
+.gauge{text-align:center}
+.gauge svg{width:110px;height:110px}
+.gauge .t{font-family:Orbitron;font-size:20px;fill:var(--text)}
+.gauge p{font-size:12px;color:var(--muted);margin-top:4px}
+
+@media(max-width:1000px){.kpi{grid-column:span 6}.wide,.side,.third{grid-column:span 12}}
+@media(max-width:560px){main{padding:16px}.kpi{grid-column:span 12}}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<header>
+  <div class="brand"><div class="dot"></div><h1>AURORA<small>智慧城市即時戰情室 · DEMO</small></h1></div>
+  <div class="clock"><span id="time">--:--:--</span><small id="date"></small></div>
+</header>
+
+<main>
+  <div class="panel kpi c1"><div class="shine"></div><h3>即時用電量 <span class="live">● LIVE</span></h3><div class="val" data-k="power">0</div><div class="delta up">▲ 3.2% MW 較昨日</div><canvas class="spark"></canvas></div>
+  <div class="panel kpi c2" style="animation-delay:.1s"><div class="shine"></div><h3>捷運運量 <span class="live">● LIVE</span></h3><div class="val" data-k="metro">0</div><div class="delta up">▲ 8.7% 人次</div><canvas class="spark"></canvas></div>
+  <div class="panel kpi c3" style="animation-delay:.2s"><div class="shine"></div><h3>空氣品質 AQI</h3><div class="val" data-k="aqi">0</div><div class="delta down">▼ 12% 良好</div><canvas class="spark"></canvas></div>
+  <div class="panel kpi c4" style="animation-delay:.3s"><div class="shine"></div><h3>5G 連線裝置</h3><div class="val" data-k="iot">0</div><div class="delta up">▲ 15.4% 萬台</div><canvas class="spark"></canvas></div>
+
+  <div class="panel wide" style="animation-delay:.35s"><h3>全城網路流量即時串流 <span class="live">● STREAMING</span></h3><canvas id="stream"></canvas>
+    <div class="legend"><span><i style="background:var(--g)"></i>上行 Gbps</span><span><i style="background:var(--b)"></i>下行 Gbps</span><span><i style="background:var(--p)"></i>延遲 ms</span></div></div>
+  <div class="panel side" style="animation-delay:.45s"><h3>無人機巡邏雷達 <span class="live">● SCAN</span></h3><canvas id="radar"></canvas></div>
+
+  <div class="panel third" style="animation-delay:.5s"><h3>能源組成</h3>
+    <div class="donut-wrap"><svg class="donut" viewBox="0 0 160 160" id="donut"></svg><div class="donut-legend" id="dl"></div></div></div>
+  <div class="panel third" style="animation-delay:.55s"><h3>各行政區人流熱度</h3><div class="bars" id="bars"></div></div>
+  <div class="panel third" style="animation-delay:.6s"><h3>系統負載</h3><div class="gauge-row" id="gauges"></div></div>
+
+  <div class="panel wide" style="animation-delay:.65s"><h3>事件日誌 <span class="live">● REALTIME</span></h3><div class="log" id="log"></div></div>
+  <div class="panel side" style="animation-delay:.7s"><h3>城市健康指數</h3>
+    <div style="text-align:center;padding:10px 0"><div class="val" id="health" style="font-family:Orbitron;font-size:72px;font-weight:800;background:linear-gradient(180deg,var(--g),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 20px rgba(0,255,200,.5))">0</div>
+    <p style="color:var(--muted);letter-spacing:4px;margin-top:6px">EXCELLENT</p></div></div>
+</main>
+
+<script>
+const $=s=>document.querySelector(s),rnd=(a,b)=>Math.random()*(b-a)+a;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function fit(c){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return{x,w:r.width,h:r.height}}
+
+// 時鐘
+function clock(){const n=new Date();$('#time').textContent=n.toLocaleTimeString('zh-TW',{hour12:false});$('#date').textContent=n.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}
+setInterval(clock,1000);clock();
+
+// 數字跳動
+function countTo(el,to,dec=0,dur=1500){const from=parseFloat(el.dataset.cur||0),st=performance.now();
+  (function t(n){const p=Math.min((n-st)/dur,1),v=from+(to-from)*(1-Math.pow(1-p,3));el.textContent=v.toLocaleString(undefined,{minimumFractionDigits:dec,maximumFractionDigits:dec});if(p<1)requestAnimationFrame(t);else el.dataset.cur=to})(st)}
+const kpis={power:[4821,0],metro:[1283604,0],aqi:[38,0],iot:[562.4,1]};
+document.querySelectorAll('.kpi .val').forEach(v=>{const[k,d]=kpis[v.dataset.k];countTo(v,k,d,2200)});
+countTo($('#health'),96.8,1,2600);
+setInterval(()=>{document.querySelectorAll('.kpi .val').forEach(v=>{const[b,d]=kpis[v.dataset.k];countTo(v,b*rnd(.97,1.03),d,900)})},3000);
+
+// 迷你走勢圖
+const colors=['--g','--b','--p','--o'];
+document.querySelectorAll('.spark').forEach((c,i)=>{const data=Array.from({length:30},()=>rnd(.3,.9));
+  (function loop(){const{x,w,h}=fit(c);data.push(Math.max(.1,Math.min(.95,data.at(-1)+rnd(-.12,.12))));data.shift();
+    const col=css(colors[i]),g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,col+'66');g.addColorStop(1,col+'00');
+    x.beginPath();data.forEach((v,j)=>x[j?'lineTo':'moveTo'](j/(data.length-1)*w,h-v*h));
+    x.strokeStyle=col;x.lineWidth=2;x.shadowColor=col;x.shadowBlur=8;x.stroke();x.lineTo(w,h);x.lineTo(0,h);x.fillStyle=g;x.shadowBlur=0;x.fill();
+    setTimeout(loop,600)})()});
+
+// 即時串流折線圖
+const S=$('#stream'),series=[[],[],[]];for(let i=0;i<120;i++){series[0].push(rnd(40,60));series[1].push(rnd(60,80));series[2].push(rnd(15,30))}
+(function stream(){const{x,w,h}=fit(S);
+  x.strokeStyle='rgba(0,255,200,.08)';x.lineWidth=1;for(let i=1;i<5;i++){x.beginPath();x.moveTo(0,h*i/5);x.lineTo(w,h*i/5);x.stroke()}
+  series.forEach((s,k)=>{s.push(Math.max(5,Math.min(95,s.at(-1)+rnd(-6,6))));s.shift();const col=css(['--g','--b','--p'][k]);
+    x.beginPath();s.forEach((v,j)=>x[j?'lineTo':'moveTo'](j/(s.length-1)*w,h-v/100*h));x.strokeStyle=col;x.lineWidth=2.2;x.shadowColor=col;x.shadowBlur=12;x.stroke();x.shadowBlur=0;
+    const ly=h-s.at(-1)/100*h;x.fillStyle=col;x.beginPath();x.arc(w-4,ly,4,0,7);x.fill()});
+  requestAnimationFrame(()=>setTimeout(stream,60))})();
+
+// 雷達掃描
+const R=$('#radar'),blips=Array.from({length:9},()=>({a:rnd(0,Math.PI*2),d:rnd(.2,.9),life:0}));let ang=0;
+(function radar(){const{x,w,h}=fit(R),cx=w/2,cy=h/2,r=Math.min(w,h)/2-8,g=css('--g');
+  x.strokeStyle='rgba(0,255,200,.25)';x.lineWidth=1;for(let i=1;i<=4;i++){x.beginPath();x.arc(cx,cy,r*i/4,0,7);x.stroke()}
+  x.beginPath();x.moveTo(cx-r,cy);x.lineTo(cx+r,cy);x.moveTo(cx,cy-r);x.lineTo(cx,cy+r);x.stroke();
+  for(let i=0;i<40;i++){const a=ang-i*.02;x.strokeStyle=`rgba(0,255,200,${.5*(1-i/40)})`;x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);x.stroke()}
+  blips.forEach(b=>{let diff=(ang-b.a)%(Math.PI*2);if(diff<0)diff+=Math.PI*2;if(diff<.05)b.life=1;
+    if(b.life>0){x.fillStyle=`rgba(255,61,110,${b.life})`;x.shadowColor=css('--r');x.shadowBlur=14;x.beginPath();x.arc(cx+Math.cos(b.a)*b.d*r,cy+Math.sin(b.a)*b.d*r,4,0,7);x.fill();x.shadowBlur=0;b.life-=.006}});
+  ang+=.025;requestAnimationFrame(radar)})();
+
+// 甜甜圈圖
+const energy=[['太陽能',34,'--o'],['風力',26,'--g'],['水力',18,'--b'],['天然氣',22,'--p']],C=2*Math.PI*62;let off=0,svg='',lg='';
+energy.forEach(([n,v,c])=>{svg+=`<circle cx="80" cy="80" r="62" stroke="var(${c})" stroke-dasharray="0 ${C}" stroke-dashoffset="${-off}" data-len="${C*v/100}" style="filter:drop-shadow(0 0 6px var(${c}))"/>`;off+=C*v/100;lg+=`<div><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(${c});margin-right:6px"></i>${n}<b>${v}%</b></div>`});
+$('#donut').innerHTML=svg;$('#dl').innerHTML=lg;
+setTimeout(()=>document.querySelectorAll('#donut circle').forEach(c=>c.style.strokeDasharray=`${c.dataset.len-3} ${C}`),400);
+
+// 長條圖
+const zones=['信義','大安','中山','板橋','內湖','南港','士林'];
+$('#bars').innerHTML=zones.map(z=>`<div class="bar"><em></em><span>${z}</span></div>`).join('');
+function bars(){document.querySelectorAll('.bar').forEach(b=>{const v=Math.round(rnd(30,98));b.style.height=v+'%';b.querySelector('em').textContent=v})}
+setTimeout(bars,500);setInterval(bars,3500);
+
+// 儀表
+const gs=[['CPU','--g'],['記憶體','--b'],['儲存','--p']];
+$('#gauges').innerHTML=gs.map(([n,c],i)=>`<div class="gauge"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="ga${i}" cx="60" cy="60" r="48" fill="none" stroke="var(${c})" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 302" transform="rotate(-90 60 60)" style="transition:stroke-dasharray 1.2s;filter:drop-shadow(0 0 6px var(${c}))"/><text id="gt${i}" class="t" x="60" y="67" text-anchor="middle">0%</text></svg><p>${n}</p></div>`).join('');
+function gauges(){gs.forEach((_,i)=>{const v=Math.round(rnd(35,92));$('#ga'+i).setAttribute('stroke-dasharray',`${302*v/100} 302`);$('#gt'+i).textContent=v+'%'})}
+setTimeout(gauges,600);setInterval(gauges,2800);
+
+// 事件日誌
+const evs=[['','信義區智慧路燈群組 #A12 上線完成'],['','捷運板南線 班距調整為 2 分 30 秒'],['warn','大安區 PM2.5 微幅上升，啟動灑水車'],['','無人機 D-07 完成內湖巡邏任務'],['err','中山區 號誌 #C88 通訊中斷，已派員處理'],['','5G 基地台 #5521 負載自動平衡完成'],['warn','南港展覽館 人流已達 85% 容量'],['','再生能源占比突破 78%，創本月新高'],['','AI 交通號誌優化 減少壅塞 12%']];
+const log=$('#log');let ei=0;
+function addLog(){const[t,m]=evs[ei++%evs.length],d=document.createElement('div');d.className=t;d.innerHTML=`<time>${new Date().toLocaleTimeString('zh-TW',{hour12:false})}</time>${m}`;log.prepend(d);while(log.children.length>7)log.lastChild.remove()}
+for(let i=0;i<4;i++)addLog();setInterval(addLog,2200);
+</script>
+</body>
+</html>
